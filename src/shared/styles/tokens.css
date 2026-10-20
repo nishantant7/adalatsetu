@@ -1,0 +1,114 @@
+/*
+ * Design tokens. Components only use these variables, so the whole look
+ * (including dark mode) is controlled from this file.
+ */
+:root {
+  color-scheme: light;
+
+  /* Brand */
+  --color-primary: #0e3b43;
+  --color-primary-hover: #165260;
+  --color-primary-soft: #e3eef0;
+  --color-on-primary: #ffffff;
+  --color-accent: #d9821c;
+  --color-accent-soft: #fbefdc;
+  --color-on-accent-soft: #7a4709;
+
+  /* Surfaces */
+  --color-bg: #f5f4ef;
+  --color-surface: #ffffff;
+  --color-surface-muted: #faf9f5;
+  --color-border: #e3e0d6;
+  --color-border-strong: #c9c4b5;
+
+  /* Text */
+  --color-text: #172126;
+  --color-text-muted: #5b6870;
+  --color-text-subtle: #87929a;
+
+  /* Status */
+  --color-success: #23704a;
+  --color-success-soft: #e2f3ea;
+  --color-danger: #b0342b;
+  --color-danger-soft: #fbe7e5;
+
+  /* Highlight panel (total amount) */
+  --color-highlight-bg: #0e3b43;
+  --color-highlight-text: #ffffff;
+  --color-highlight-muted: #b9d0d4;
+  --color-highlight-amount: #ffc56e;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-devanagari: 'Noto Sans Devanagari', 'Kohinoor Devanagari', 'Mangal', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Shape & depth */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgb(16 32 38 / 6%);
+  --shadow-md: 0 4px 16px rgb(16 32 38 / 8%);
+
+  /* Layout */
+  --sidebar-width: 264px;
+  --content-max-width: 1120px;
+  --topbar-height: 60px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --color-primary: #5fb3bf;
+    --color-primary-hover: #7cc4ce;
+    --color-primary-soft: #16343a;
+    --color-on-primary: #08191c;
+    --color-accent: #f0a94b;
+    --color-accent-soft: #3a2a12;
+    --color-on-accent-soft: #f7cf93;
+    --color-bg: #0c1416;
+    --color-surface: #121d20;
+    --color-surface-muted: #0f191b;
+    --color-border: #233337;
+    --color-border-strong: #33484d;
+    --color-text: #e5ecee;
+    --color-text-muted: #9fb0b5;
+    --color-text-subtle: #75878c;
+    --color-success: #6fcf9a;
+    --color-success-soft: #14301f;
+    --color-danger: #f08a80;
+    --color-danger-soft: #3a1915;
+    --color-highlight-bg: #16343a;
+    --color-highlight-muted: #9fc0c5;
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 35%);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-primary: #5fb3bf;
+  --color-primary-hover: #7cc4ce;
+  --color-primary-soft: #16343a;
+  --color-on-primary: #08191c;
+  --color-accent: #f0a94b;
+  --color-accent-soft: #3a2a12;
+  --color-on-accent-soft: #f7cf93;
+  --color-bg: #0c1416;
+  --color-surface: #121d20;
+  --color-surface-muted: #0f191b;
+  --color-border: #233337;
+  --color-border-strong: #33484d;
+  --color-text: #e5ecee;
+  --color-text-muted: #9fb0b5;
+  --color-text-subtle: #75878c;
+  --color-success: #6fcf9a;
+  --color-success-soft: #14301f;
+  --color-danger: #f08a80;
+  --color-danger-soft: #3a1915;
+  --color-highlight-bg: #16343a;
+  --color-highlight-muted: #9fc0c5;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 35%);
+}

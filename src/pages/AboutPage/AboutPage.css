@@ -1,0 +1,25 @@
+.about__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.about__list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about__muted {
+  color: var(--color-text-subtle);
+  font-size: 0.85rem;
+}
+
+.about__disclaimer {
+  background: var(--color-accent-soft);
+  border-color: transparent;
+  color: var(--color-on-accent-soft);
+}

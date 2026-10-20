@@ -1,0 +1,60 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+
+  .print-report {
+    color: #000;
+    font-size: 11pt;
+  }
+
+  .print-report h1 {
+    text-align: center;
+    font-size: 17pt;
+  }
+
+  .print-report__sub {
+    margin: 4px 0 14px;
+    text-align: center;
+    font-size: 9.5pt;
+  }
+
+  .print-report table {
+    width: 100%;
+    margin-bottom: 10px;
+    border-collapse: collapse;
+  }
+
+  .print-report th,
+  .print-report td {
+    padding: 5px 8px;
+    border: 1px solid #999;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  .print-report td.is-amount {
+    text-align: right;
+  }
+
+  .print-report tr.is-total th,
+  .print-report tr.is-total td {
+    font-weight: 700;
+  }
+
+  .print-report__words {
+    font-style: italic;
+  }
+
+  .print-report__order {
+    margin-top: 12px;
+    text-align: justify;
+  }
+
+  .print-report__footer {
+    margin-top: 18px;
+    font-size: 8.5pt;
+    color: #555;
+  }
+}

@@ -1,0 +1,33 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.logo__mark {
+  display: flex;
+  color: #0e3b43;
+}
+
+.logo__text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.logo__name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.logo__hindi {
+  font-size: 0.74rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  line-height: 1.3;
+}

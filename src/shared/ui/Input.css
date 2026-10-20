@@ -1,0 +1,44 @@
+/* Base text input, shared by every form control. */
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 1rem;
+  transition: border-color 0.15s ease;
+}
+
+.input:hover {
+  border-color: var(--color-text-subtle);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.field--invalid .input {
+  border-color: var(--color-danger);
+}
+
+.input-affix {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-affix__prefix {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-subtle);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.input-affix .input {
+  padding-left: 30px;
+  font-variant-numeric: tabular-nums;
+}

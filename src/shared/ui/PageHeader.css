@@ -1,0 +1,29 @@
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header__eyebrow {
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+.page-header__title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+}
+
+.page-header__description {
+  max-width: 70ch;
+  margin-top: 8px;
+  color: var(--color-text-muted);
+}
+
+.page-header__extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}

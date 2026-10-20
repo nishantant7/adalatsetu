@@ -1,0 +1,110 @@
+.result-summary__total {
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 100% 0%, rgb(255 197 110 / 18%), transparent 50%),
+    var(--color-highlight-bg);
+  color: var(--color-highlight-text);
+}
+
+.result-summary__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-highlight-muted);
+}
+
+.result-summary__amount {
+  margin: 4px 0 2px;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-highlight-amount);
+  font-variant-numeric: tabular-nums;
+}
+
+.result-summary__words {
+  font-size: 0.9rem;
+}
+
+.result-summary__formula {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--color-highlight-muted);
+}
+
+.result-summary__table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+}
+
+.result-summary__table th,
+.result-summary__table td {
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.result-summary__table th {
+  text-align: left;
+  font-weight: 500;
+}
+
+.result-summary__table td {
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-summary__row-label {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.result-summary__code {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.result-summary__note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.78rem;
+  color: var(--color-text-subtle);
+}
+
+.result-summary__table tr.is-emphasis {
+  background: var(--color-accent-soft);
+}
+
+.result-summary__table tr.is-emphasis th,
+.result-summary__table tr.is-emphasis td {
+  padding-inline: 10px;
+}
+
+.result-summary__table tr.is-muted td {
+  color: var(--color-text-subtle);
+  font-weight: 500;
+}
+
+.result-summary__table tr.is-total th,
+.result-summary__table tr.is-total td {
+  border-top: 2px solid var(--color-primary);
+  border-bottom: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
