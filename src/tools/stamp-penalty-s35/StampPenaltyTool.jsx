@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Badge, PageHeader, Tabs, useToast } from '@/shared/ui';
-import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
-import { shareOnWhatsApp } from '@/shared/lib/share';
-import { addMonths, formatDate, toISODate, today } from '@/shared/lib/dates';
 import { getRecord, saveRecord } from '@/features/history';
+import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
+import { formatDate } from '@/shared/lib/dates';
+import { shareOnWhatsApp } from '@/shared/lib/share';
+import { Badge, PageHeader, Tabs, useToast } from '@/shared/ui';
 import HowItWorks from './components/HowItWorks';
 import InstrumentForm from './components/InstrumentForm';
 import PrintReport from './components/PrintReport';
 import ResultPanel from './components/ResultPanel';
 import StatuteText from './components/StatuteText';
+import { WORKED_EXAMPLE } from './content/example';
 import { useStampPenaltyForm } from './hooks/useStampPenaltyForm';
 import { ACT_IN_FORCE_FROM } from './logic/constants';
+import { describeChargeableMonths } from './logic/describePeriod';
 import { buildShareSummary } from './logic/shareSummary';
 import './StampPenaltyTool.css';
 
@@ -21,25 +23,13 @@ const TABS = [
   { id: 'statute', label: 'Statute' },
 ];
 
-/** The worked example: 104 complete months + a part month = 105 chargeable months. */
-function exampleValues() {
-  const calculationDate = today();
-  return {
-    marketValue: '6,50,000',
-    dutyPaid: '1,000',
-    dutyRate: '5',
-    calculationDate: toISODate(calculationDate),
-    executionDate: toISODate(addMonths(calculationDate, -104)),
-    instrumentType: 'Agreement to Sell',
-  };
-}
-
 export default function StampPenaltyTool({ tool }) {
   useDocumentTitle(tool.name);
   const showToast = useToast();
   const [activeTab, setActiveTab] = useState('calculator');
   const [searchParams, setSearchParams] = useSearchParams();
-  const { values, setField, reset, load, error, result } = useStampPenaltyForm();
+  const { values, errors, setField, calculate, reset, loadAndCalculate, result, isStale } =
+    useStampPenaltyForm();
 
   const recordId = searchParams.get('record');
 
@@ -47,16 +37,21 @@ export default function StampPenaltyTool({ tool }) {
   useEffect(() => {
     if (!recordId) return;
     getRecord(recordId).then((record) => {
-      if (record?.toolId === tool.id) load(record.inputs);
+      if (record?.toolId === tool.id) loadAndCalculate(record.inputs);
       setSearchParams({}, { replace: true });
     });
-  }, [recordId, tool.id, load, setSearchParams]);
+  }, [recordId, tool.id, loadAndCalculate, setSearchParams]);
 
   const details = {
     instrumentType: values.instrumentType.trim(),
     caseNumber: values.caseNumber.trim(),
     caseTitle: values.caseTitle.trim(),
     court: values.court.trim(),
+  };
+
+  const loadExample = () => {
+    loadAndCalculate(WORKED_EXAMPLE);
+    setActiveTab('calculator');
   };
 
   const handleSave = async () => {
@@ -68,7 +63,7 @@ export default function StampPenaltyTool({ tool }) {
       await saveRecord({
         toolId: tool.id,
         title,
-        subtitle: `Executed ${formatDate(result.executionDate)} · ${result.months} months`,
+        subtitle: `Executed ${formatDate(result.executionDate)} · Hearing ${formatDate(result.hearingDate)} · ${describeChargeableMonths(result)}`,
         amount: result.total,
         inputs: values,
       });
@@ -97,25 +92,30 @@ export default function StampPenaltyTool({ tool }) {
           <div className="stamp-tool__layout">
             <InstrumentForm
               values={values}
+              errors={errors}
               setField={setField}
-              error={error}
+              onCalculate={calculate}
               onReset={reset}
-              onLoadExample={() => load(exampleValues())}
             />
             <ResultPanel
               result={result}
+              isStale={isStale}
               details={details}
+              onLoadExample={loadExample}
+              onRecalculate={calculate}
               onSave={handleSave}
               onPrint={() => window.print()}
               onShare={() => shareOnWhatsApp(buildShareSummary(result, details))}
             />
           </div>
         )}
-        {activeTab === 'how-it-works' && <HowItWorks />}
+        {activeTab === 'how-it-works' && <HowItWorks onLoadExample={loadExample} />}
         {activeTab === 'statute' && <StatuteText />}
       </div>
 
-      {result && result.deficit > 0 && <PrintReport result={result} details={details} />}
+      {result && result.deficit > 0 && !isStale && (
+        <PrintReport result={result} details={details} />
+      )}
     </div>
   );
 }

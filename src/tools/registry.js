@@ -2,7 +2,7 @@
  * Central list of tools. To add a new tool:
  *   1. Create `src/tools/<tool-id>/` with an `index.js` definition (see stamp-penalty-s35).
  *   2. Import it here and add it to TOOLS.
- * Navigation, the home page and routing pick it up automatically.
+ * Navigation, the home page (cards and guides) and routing pick it up automatically.
  */
 import { ROUTES } from '@/config/routes';
 import stampPenaltyS35 from './stamp-penalty-s35';
@@ -15,6 +15,11 @@ export const CATEGORIES = [
   },
 ];
 
+/**
+ * Each tool definition has the shape (see stamp-penalty-s35/index.js):
+ *   { id, name, fullName, category, icon, description, statute, isNew,
+ *     guide: { purpose, procedure, steps, rules, authorities }, Component }
+ */
 export const TOOLS = [stampPenaltyS35];
 
 export function getTool(id) {
@@ -35,15 +40,4 @@ export function getToolsByCategory() {
     ...category,
     tools: TOOLS.filter((tool) => tool.category === category.id),
   })).filter((category) => category.tools.length > 0);
-}
-
-export function searchTools(query) {
-  const needle = query.trim().toLowerCase();
-  if (!needle) return TOOLS;
-  return TOOLS.filter((tool) =>
-    [tool.name, tool.fullName, tool.description, tool.statute, ...tool.keywords]
-      .join(' ')
-      .toLowerCase()
-      .includes(needle),
-  );
 }

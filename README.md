@@ -16,14 +16,19 @@ clause (a) of the proviso to Section 35:
 
 ```
 Deficit  (A) = Market value × Rate% − Stamp duty paid
-Months   (M) = months from the date of execution; the execution day counts and any part of a month counts as a full month
+Months   (M) = whole months date to date + remaining days ÷ 30
+               (execution day counted, hearing day excluded)
 Penalty  (B) = A × 1% × M, never more than A
 Interest (C) = A × 1% × M, with no upper limit
 Total        = A + B + C        (every amount rounded up to the next rupee)
 ```
 
-It also shows the step-by-step working, drafts an order-sheet paragraph in English and Hindi,
-prints an A4 report, shares a summary on WhatsApp and saves calculations to history.
+Example: executed 15-Jan, hearing 20-Feb → 1 month (15-Jan to the end of 14-Feb) + 5 days
+(15–19 Feb) = 1 + 5/30 months.
+
+Figures are calculated when the user presses **Calculate**. The tool also shows the
+step-by-step working, drafts an order-sheet paragraph in English and Hindi, prints an A4
+report, shares a summary on WhatsApp and saves calculations to history.
 
 ## Tech stack
 
@@ -66,14 +71,14 @@ src/
 ├── features/                    # App-wide features, each with a public index.js
 │   ├── history/                 # Saved calculations: service + RecentCalculations
 │   └── theme/                   # Light/dark theme: useTheme + ThemeToggle
-├── pages/                       # One folder per route: HomePage, HistoryPage, AboutPage, ToolPage, NotFoundPage
+├── pages/                       # One folder per route; HomePage/sections/ holds the landing page sections
 ├── shared/                      # Generic, reusable code with no app-specific knowledge
 │   ├── hooks/                   # useDocumentTitle
 │   ├── lib/                     # Pure helpers: dates, currency, numberToWords, storage, clipboard, share
 │   ├── styles/                  # tokens.css (design tokens, themes) and base.css
 │   └── ui/                      # UI kit: Button, Card, Field, AmountInput, Tabs, Toast, PageHeader, …
 └── tools/
-    ├── registry.js              # Tool and category list; drives navigation, search and routing
+    ├── registry.js              # Tool and category list; drives navigation, the home page and routing
     └── stamp-penalty-s35/
         ├── index.js             # Tool definition (name, category, lazy component)
         ├── StampPenaltyTool.jsx # Tool page
@@ -96,9 +101,11 @@ Imports flow in one direction: `app` → `pages` → `features` / `tools` → `s
 1. Create `src/tools/<tool-id>/` with an `index.js` that exports the tool definition
    (copy `stamp-penalty-s35/index.js` as a template).
 2. Put calculations in `logic/` as pure functions, with `*.test.js` tests next to them.
-3. Register the tool in `src/tools/registry.js`, adding a category there if needed.
+3. Write the tool's `content/guide.js` (purpose, procedure, steps, rules, authorities).
+4. Register the tool in `src/tools/registry.js`, adding a category there if needed.
 
-The sidebar, the home page, search and the `/tools/<tool-id>` route pick it up automatically.
+The sidebar, the home page (start cards and a user-manual section built from the guide) and
+the `/tools/<tool-id>` route pick it up automatically.
 
 ### Conventions
 

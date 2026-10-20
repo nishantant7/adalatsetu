@@ -1,0 +1,36 @@
+.principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principles__item {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.principles__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-on-accent-soft);
+}
+
+.principles__title {
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.principles__text {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}

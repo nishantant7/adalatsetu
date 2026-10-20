@@ -1,6 +1,7 @@
 import { formatINR } from '@/shared/lib/currency';
 import { formatDate } from '@/shared/lib/dates';
 import { rupeesInWords } from '@/shared/lib/numberToWords';
+import { formatMonths } from './describePeriod';
 
 /**
  * Builds a draft order-sheet paragraph for the impounding and admission of an
@@ -14,13 +15,28 @@ export function buildOrderDraft(result, details, language) {
   return language === 'hi' ? buildHindi(result, details) : buildEnglish(result, details);
 }
 
+/** "104 months and 5 days (104.1667 months)" or "105 months" */
+function periodEnglish({ completedMonths, remainingDays, months }) {
+  const monthsText = `${completedMonths} month${completedMonths === 1 ? '' : 's'}`;
+  if (!remainingDays) return monthsText;
+  const daysText = `${remainingDays} day${remainingDays === 1 ? '' : 's'}`;
+  return `${monthsText} and ${daysText} (${formatMonths(months)} months)`;
+}
+
+/** "104 माह 5 दिन (104.1667 माह)" or "105 माह" */
+function periodHindi({ completedMonths, remainingDays, months }) {
+  if (!remainingDays) return `${completedMonths} माह`;
+  return `${completedMonths} माह ${remainingDays} दिन (${formatMonths(months)} माह)`;
+}
+
 function buildEnglish(r, { instrumentType }) {
   const instrument = instrumentType || 'instrument';
+  const period = `from ${formatDate(r.executionDate)} to the date of hearing ${formatDate(r.hearingDate)}, i.e. ${periodEnglish(r.period)}`;
   const penalty = r.isPenaltyCapped
-    ? `penalty @ 1% per month for ${r.months} months works out to ${formatINR(r.penaltyBeforeCap)}, which is restricted to the principal amount of deficit stamp duty, i.e. ${formatINR(r.penalty)}`
-    : `penalty @ 1% per month for ${r.months} months is ${formatINR(r.penalty)}`;
+    ? `penalty @ 1% per month for the period ${period}, works out to ${formatINR(r.penaltyBeforeCap)}, which is restricted to the principal amount of deficit stamp duty, i.e. ${formatINR(r.penalty)}`
+    : `penalty @ 1% per month for the period ${period}, is ${formatINR(r.penalty)}`;
   const interest = r.includeInterest
-    ? `; and in terms of the proviso thereto, interest @ 1% per month from the date of execution till the date of payment for ${r.months} months is ${formatINR(r.interest)}`
+    ? `; and in terms of the proviso thereto, interest @ 1% per month for the same period is ${formatINR(r.interest)}`
     : '';
 
   return [
@@ -34,11 +50,12 @@ function buildEnglish(r, { instrumentType }) {
 
 function buildHindi(r, { instrumentType }) {
   const instrument = instrumentType || 'लिखत';
+  const period = `निष्पादन दिनांक ${formatDate(r.executionDate)} से सुनवाई दिनांक ${formatDate(r.hearingDate)} तक ${periodHindi(r.period)}`;
   const penalty = r.isPenaltyCapped
-    ? `1% प्रतिमाह की दर से ${r.months} माह की शास्ति ${formatINR(r.penaltyBeforeCap)} होती है, जो कमी वाले स्टाम्प शुल्क की मूल राशि से अधिक न होने के कारण ${formatINR(r.penalty)} तक सीमित की जाती है`
-    : `1% प्रतिमाह की दर से ${r.months} माह की शास्ति ${formatINR(r.penalty)}`;
+    ? `${period} की अवधि हेतु 1% प्रतिमाह की दर से शास्ति ${formatINR(r.penaltyBeforeCap)} होती है, जो कमी वाले स्टाम्प शुल्क की मूल राशि से अधिक न होने के कारण ${formatINR(r.penalty)} तक सीमित की जाती है`
+    : `${period} की अवधि हेतु 1% प्रतिमाह की दर से शास्ति ${formatINR(r.penalty)}`;
   const interest = r.includeInterest
-    ? `, तथा परन्तुक अनुसार निष्पादन दिनांक से भुगतान दिनांक तक 1% प्रतिमाह की दर से ${r.months} माह का ब्याज ${formatINR(r.interest)}`
+    ? `, तथा परन्तुक अनुसार उक्त अवधि हेतु 1% प्रतिमाह की दर से ब्याज ${formatINR(r.interest)}`
     : '';
 
   return [

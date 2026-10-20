@@ -1,45 +1,48 @@
 import { describe, expect, it } from 'vitest';
-import { calculateStampPenalty, validateInputs } from './calculateStampPenalty';
-import { countChargeableMonths } from './chargeableMonths';
+import { calculateChargeablePeriod } from './chargeablePeriod';
+import { calculateStampPenalty } from './calculateStampPenalty';
+import { validateInputs } from './validateInputs';
 
 const date = (y, m, d) => new Date(y, m - 1, d);
 
-describe('countChargeableMonths', () => {
+describe('calculateChargeablePeriod', () => {
   it.each([
-    ['same day', date(2025, 1, 15), date(2025, 1, 15), 1],
-    ['one day short of a month', date(2025, 1, 15), date(2025, 2, 14), 1],
-    ['exactly one month later (part month counts)', date(2025, 1, 15), date(2025, 2, 15), 2],
-    ['month-end clamp, before', date(2025, 1, 31), date(2025, 2, 27), 1],
-    ['month-end clamp, on', date(2025, 1, 31), date(2025, 2, 28), 2],
-    ['multi-year span', date(2024, 1, 15), date(2026, 10, 20), 34],
-  ])('%s', (_label, start, end, expected) => {
-    expect(countChargeableMonths(start, end).months).toBe(expected);
+    // [label, execution, hearing, completed months, remaining days]
+    ['same day (hearing day excluded)', date(2025, 1, 15), date(2025, 1, 15), 0, 0],
+    ['15-Jan to 14-Feb hearing: 30 days', date(2025, 1, 15), date(2025, 2, 14), 0, 30],
+    ['15-Jan to 15-Feb hearing: exactly one month', date(2025, 1, 15), date(2025, 2, 15), 1, 0],
+    ['15-Jan to 20-Feb hearing: one month and 5 days', date(2025, 1, 15), date(2025, 2, 20), 1, 5],
+    ['month-end clamp', date(2025, 1, 31), date(2025, 2, 28), 1, 0],
+    ['multi-year span', date(2018, 2, 20), date(2026, 10, 25), 104, 5],
+  ])('%s', (_label, execution, hearing, completedMonths, remainingDays) => {
+    expect(calculateChargeablePeriod(execution, hearing)).toMatchObject({
+      completedMonths,
+      remainingDays,
+    });
   });
 
-  it('reports the actual period for display', () => {
-    expect(countChargeableMonths(date(2018, 2, 20), date(2026, 10, 20))).toEqual({
-      months: 105,
-      completedMonths: 104,
-      extraDays: 1,
-    });
+  it('expresses remaining days as thirtieths of a month', () => {
+    expect(calculateChargeablePeriod(date(2025, 1, 15), date(2025, 2, 20)).months).toBeCloseTo(
+      1 + 5 / 30,
+    );
   });
 });
 
 describe('calculateStampPenalty', () => {
-  // Worked example: MV ₹6,50,000 @ 5%, ₹1,000 paid, 105 months.
+  // Worked example: MV ₹6,50,000 @ 5%, ₹1,000 paid, exactly 105 months.
   const example = {
     marketValue: 650000,
     dutyRate: 5,
     dutyPaid: 1000,
-    executionDate: date(2018, 2, 20),
-    calculationDate: date(2026, 10, 20),
+    executionDate: date(2017, 7, 20),
+    hearingDate: date(2026, 4, 20),
   };
 
   it('caps penalty at the deficit and adds uncapped interest', () => {
     const result = calculateStampPenalty(example);
     expect(result.properDuty).toBe(32500);
     expect(result.deficit).toBe(31500);
-    expect(result.months).toBe(105);
+    expect(result.period.months).toBe(105);
     expect(result.penaltyBeforeCap).toBe(33075);
     expect(result.penalty).toBe(31500);
     expect(result.isPenaltyCapped).toBe(true);
@@ -53,11 +56,25 @@ describe('calculateStampPenalty', () => {
     expect(result.total).toBe(63000);
   });
 
-  it('does not cap penalty when it is below the deficit', () => {
-    const result = calculateStampPenalty({ ...example, calculationDate: date(2018, 8, 1) });
-    expect(result.months).toBe(6);
-    expect(result.penalty).toBe(1890);
+  it('charges remaining days as days/30 of a month', () => {
+    // 1 month + 5 days = 35/30 months → 31,500 × 1% × 35/30 = 367.5 → ₹368
+    const result = calculateStampPenalty({
+      ...example,
+      executionDate: date(2025, 1, 15),
+      hearingDate: date(2025, 2, 20),
+    });
+    expect(result.penaltyBeforeCap).toBe(368);
+    expect(result.penalty).toBe(368);
     expect(result.isPenaltyCapped).toBe(false);
+    expect(result.interest).toBe(368);
+    expect(result.total).toBe(31500 + 368 + 368);
+  });
+
+  it('charges nothing extra when the hearing is on the execution day', () => {
+    const result = calculateStampPenalty({ ...example, hearingDate: example.executionDate });
+    expect(result.penalty).toBe(0);
+    expect(result.interest).toBe(0);
+    expect(result.total).toBe(31500);
   });
 
   it('rounds every amount up to the next rupee', () => {
@@ -66,7 +83,7 @@ describe('calculateStampPenalty', () => {
       dutyRate: 5,
       dutyPaid: 0,
       executionDate: date(2026, 1, 1),
-      calculationDate: date(2026, 1, 1),
+      hearingDate: date(2026, 2, 1),
     });
     expect(result.properDuty).toBe(501); // 500.05 → 501
     expect(result.penalty).toBe(6); // 5.01 → 6
@@ -91,19 +108,30 @@ describe('validateInputs', () => {
     dutyRate: 5,
     dutyPaid: 0,
     executionDate: date(2026, 1, 1),
-    calculationDate: date(2026, 2, 1),
+    hearingDate: date(2026, 2, 1),
   };
 
   it('accepts valid input', () => {
-    expect(validateInputs(valid)).toBeNull();
+    expect(validateInputs(valid)).toEqual({});
   });
 
-  it('rejects a calculation date before execution', () => {
-    expect(validateInputs({ ...valid, calculationDate: date(2025, 12, 31) })).toMatch(/before/);
+  it('reports every missing required field', () => {
+    expect(Object.keys(validateInputs({ dutyRate: 5 })).sort()).toEqual([
+      'dutyPaid',
+      'executionDate',
+      'hearingDate',
+      'marketValue',
+    ]);
+  });
+
+  it('rejects a hearing date before execution', () => {
+    expect(validateInputs({ ...valid, hearingDate: date(2025, 12, 31) }).hearingDate).toMatch(
+      /before/,
+    );
   });
 
   it('rejects non-positive market value and negative duty paid', () => {
-    expect(validateInputs({ ...valid, marketValue: 0 })).toMatch(/Market value/);
-    expect(validateInputs({ ...valid, dutyPaid: -1 })).toMatch(/negative/);
+    expect(validateInputs({ ...valid, marketValue: 0 }).marketValue).toMatch(/greater than zero/);
+    expect(validateInputs({ ...valid, dutyPaid: -1 }).dutyPaid).toMatch(/negative/);
   });
 });

@@ -1,0 +1,89 @@
+.tool-guide__muted {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.tool-guide__procedure {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.tool-guide__procedure li {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.tool-guide__procedure-index {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+.tool-guide__procedure-title {
+  font-weight: 600;
+}
+
+.tool-guide__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.tool-guide__steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tool-guide__open {
+  margin-top: 18px;
+}
+
+.tool-guide__rules {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-guide__rules dt {
+  font-weight: 600;
+}
+
+.tool-guide__rules dd {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.tool-guide__authorities ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tool-guide__authorities li {
+  padding-left: 14px;
+  border-left: 3px solid var(--color-primary);
+}
+
+.tool-guide__authority-title {
+  font-weight: 600;
+}

@@ -15,19 +15,6 @@
   }
 }
 
-.stamp-tool__working {
-  margin: 18px 0;
-}
-
-.stamp-tool__working summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--color-primary);
-}
-
 .stamp-tool__steps {
   margin: 10px 0 0;
   padding-left: 22px;
@@ -76,6 +63,7 @@
   gap: 10px;
 }
 
+.stamp-tool__rules,
 .stamp-tool__related {
   margin: 0;
   display: flex;
@@ -83,10 +71,16 @@
   gap: 14px;
 }
 
+.stamp-tool__rules {
+  margin-top: 16px;
+}
+
+.stamp-tool__rules dt,
 .stamp-tool__related dt {
   font-weight: 600;
 }
 
+.stamp-tool__rules dd,
 .stamp-tool__related dd {
   margin: 2px 0 0;
   color: var(--color-text-muted);

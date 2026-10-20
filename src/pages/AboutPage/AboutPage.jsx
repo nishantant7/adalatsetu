@@ -1,6 +1,6 @@
-import { Card, PageHeader } from '@/shared/ui';
-import { SITE } from '@/config/site';
+import { DISCLAIMER, PRINCIPLES, SITE } from '@/config/site';
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
+import { Card, PageHeader } from '@/shared/ui';
 import { TOOLS } from '@/tools/registry';
 import './AboutPage.css';
 
@@ -16,27 +16,17 @@ export default function AboutPage() {
             {SITE.name} <span lang="hi">({SITE.nameHindi})</span>
           </>
         }
-        description="AdalatSetu — “a bridge to the court” — brings together the calculations and references that come up every day in court work, so that figures in an order are quick to arrive at and easy to verify."
+        description={`${SITE.name} — “${SITE.meaning}” — brings together the calculations and references that come up every day in court work, so that figures in an order are quick to arrive at and easy to verify.`}
       />
 
       <div className="about__grid">
         <Card title="Principles">
           <ul className="about__list">
-            <li>
-              <strong>Statute first.</strong> Every tool cites the provision it implements and shows
-              its working.
-            </li>
-            <li>
-              <strong>Transparent.</strong> Each figure can be traced step by step, ready for the
-              order sheet.
-            </li>
-            <li>
-              <strong>Private.</strong> Nothing you enter leaves your device; saved calculations
-              stay in your browser.
-            </li>
-            <li>
-              <strong>Bilingual.</strong> Drafts are available in English and Hindi.
-            </li>
+            {PRINCIPLES.map((principle) => (
+              <li key={principle.title}>
+                <strong>{principle.title}.</strong> {principle.text}
+              </li>
+            ))}
           </ul>
         </Card>
 
@@ -54,11 +44,7 @@ export default function AboutPage() {
       </div>
 
       <Card title="Disclaimer" className="about__disclaimer">
-        <p>
-          {SITE.name} is an aid to calculation and drafting. It is not legal advice and does not
-          replace judicial application of mind. Verify every figure against the statute, the
-          applicable rate of duty and the facts of the case before relying on it.
-        </p>
+        <p>{DISCLAIMER}</p>
       </Card>
     </div>
   );

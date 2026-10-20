@@ -2,7 +2,7 @@ import { Badge } from '@/shared/ui';
 import { formatINR } from '@/shared/lib/currency';
 import { formatDate } from '@/shared/lib/dates';
 import { rupeesInWords } from '@/shared/lib/numberToWords';
-import { describePeriod } from '../logic/describePeriod';
+import { describeChargeableMonths, describePeriod } from '../logic/describePeriod';
 import './ResultSummary.css';
 
 export default function ResultSummary({ result }) {
@@ -13,8 +13,8 @@ export default function ResultSummary({ result }) {
     { label: 'Deficit stamp duty', code: 'A', value: formatINR(result.deficit), emphasis: true },
     {
       label: 'Chargeable period',
-      note: `${formatDate(result.executionDate)} to ${formatDate(result.calculationDate)} · ${describePeriod(result)}`,
-      value: `${result.months} months`,
+      note: `${formatDate(result.executionDate)} to ${formatDate(result.hearingDate)} (hearing day excluded) · ${describePeriod(result)}`,
+      value: describeChargeableMonths(result),
     },
     {
       label: 'Penalty @ 1% per month',

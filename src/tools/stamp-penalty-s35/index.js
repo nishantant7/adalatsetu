@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { GUIDE } from './content/guide';
 
 /** Tool definition consumed by the registry. */
 const stampPenaltyS35 = {
@@ -10,8 +11,8 @@ const stampPenaltyS35 = {
   description:
     'Deficit stamp duty, penalty and interest for an impounded instrument, with a ready order-sheet paragraph.',
   statute: 'Indian Stamp Act, 1899 · MP Second Amendment 2025',
-  keywords: ['stamp', 'impound', 'section 35', 'penalty', 'interest', 'deficit', 'स्टाम्प'],
   isNew: true,
+  guide: GUIDE,
   Component: lazy(() => import('./StampPenaltyTool')),
 };
 

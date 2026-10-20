@@ -2,22 +2,28 @@ import { AmountInput, Button, Card, Field, Switch } from '@/shared/ui';
 import { INSTRUMENT_TYPES } from '../content/statute';
 import './InstrumentForm.css';
 
-export default function InstrumentForm({ values, setField, error, onReset, onLoadExample }) {
+export default function InstrumentForm({ values, errors, setField, onCalculate, onReset }) {
   const bind = (name) => ({
     value: values[name],
     onChange: (event) => setField(name, event.target.value),
   });
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onCalculate();
+  };
+
   return (
     <Card
       as="form"
       title="Instrument details"
-      description="Fill the three required fields. Everything else has a sensible default."
+      description="Fill the required fields and press Calculate."
       className="instrument-form"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={handleSubmit}
+      noValidate
     >
       <div className="instrument-form__fields">
-        <Field label="Market value / consideration" required>
+        <Field label="Market value / consideration" required error={errors.marketValue}>
           {(props) => (
             <AmountInput
               {...props}
@@ -28,7 +34,7 @@ export default function InstrumentForm({ values, setField, error, onReset, onLoa
           )}
         </Field>
 
-        <Field label="Stamp duty already paid" required>
+        <Field label="Stamp duty already paid" required error={errors.dutyPaid}>
           {(props) => (
             <AmountInput
               {...props}
@@ -39,44 +45,44 @@ export default function InstrumentForm({ values, setField, error, onReset, onLoa
           )}
         </Field>
 
-        <Field
-          label="Date of execution"
-          required
-          hint="Months are counted from this date, including the day itself."
-        >
-          {(props) => <input {...props} type="date" className="input" {...bind('executionDate')} />}
-        </Field>
+        <div className="instrument-form__fields instrument-form__fields--two">
+          <Field
+            label="Date of execution"
+            required
+            error={errors.executionDate}
+            hint="Counted in the period"
+          >
+            {(props) => (
+              <input {...props} type="date" className="input" {...bind('executionDate')} />
+            )}
+          </Field>
+          <Field
+            label="Date of hearing"
+            required
+            error={errors.hearingDate}
+            hint="Not counted in the period"
+          >
+            {(props) => <input {...props} type="date" className="input" {...bind('hearingDate')} />}
+          </Field>
+        </div>
       </div>
-
-      {error && (
-        <p className="instrument-form__error" role="alert">
-          {error}
-        </p>
-      )}
 
       <details className="instrument-form__section">
         <summary>Calculation options</summary>
-        <div className="instrument-form__fields instrument-form__fields--two">
-          <Field label="Stamp duty rate (%)" hint="Applied to market value">
-            {(props) => (
-              <input
-                {...props}
-                type="number"
-                inputMode="decimal"
-                min="0"
-                max="100"
-                step="0.01"
-                className="input"
-                {...bind('dutyRate')}
-              />
-            )}
-          </Field>
-          <Field label="Date of calculation / payment" hint="Defaults to today">
-            {(props) => (
-              <input {...props} type="date" className="input" {...bind('calculationDate')} />
-            )}
-          </Field>
-        </div>
+        <Field label="Stamp duty rate (%)" hint="Applied to market value" error={errors.dutyRate}>
+          {(props) => (
+            <input
+              {...props}
+              type="number"
+              inputMode="decimal"
+              min="0"
+              max="100"
+              step="0.01"
+              className="input instrument-form__rate"
+              {...bind('dutyRate')}
+            />
+          )}
+        </Field>
         <Switch
           checked={values.includeInterest}
           onChange={(checked) => setField('includeInterest', checked)}
@@ -146,11 +152,11 @@ export default function InstrumentForm({ values, setField, error, onReset, onLoa
       </details>
 
       <div className="instrument-form__actions">
-        <Button variant="secondary" size="sm" icon="refresh" onClick={onReset}>
-          Reset
+        <Button type="submit" size="lg" icon="calculator" className="instrument-form__calculate">
+          Calculate
         </Button>
-        <Button variant="ghost" size="sm" icon="sparkle" onClick={onLoadExample}>
-          Load example
+        <Button variant="secondary" size="lg" icon="refresh" onClick={onReset}>
+          Reset
         </Button>
       </div>
     </Card>

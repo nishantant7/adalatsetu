@@ -1,8 +1,21 @@
 import { formatINR } from '@/shared/lib/currency';
 import { formatDate } from '@/shared/lib/dates';
-import { describePeriod } from '../logic/describePeriod';
+import { DAYS_PER_PART_MONTH } from '../logic/constants';
+import { describeChargeableMonths, describePeriod } from '../logic/describePeriod';
+
+/** "(104 + 5/30)" or "105" — the month multiplier as used in the formula. */
+function monthMultiplier({ completedMonths, remainingDays }) {
+  return remainingDays
+    ? `(${completedMonths} + ${remainingDays}/${DAYS_PER_PART_MONTH})`
+    : String(completedMonths);
+}
 
 export default function CalculationSteps({ result: r }) {
+  const months = describeChargeableMonths(r);
+  const multiplier = monthMultiplier(r.period);
+  const { completedMonths, remainingDays } = r.period;
+  const wholeMonths = `${completedMonths} whole month${completedMonths === 1 ? '' : 's'}`;
+
   const steps = [
     <>
       Proper stamp duty = {formatINR(r.marketValue)} × {r.dutyRate}% ={' '}
@@ -13,12 +26,18 @@ export default function CalculationSteps({ result: r }) {
       <strong>{formatINR(r.deficit)}</strong>
     </>,
     <>
-      Period {formatDate(r.executionDate)} to {formatDate(r.calculationDate)}, execution day
-      included = {describePeriod(r)} → <strong>{r.months} months</strong> (part of a month counts as
-      a full month)
+      Period {formatDate(r.executionDate)} to {formatDate(r.hearingDate)} (execution day counted,
+      hearing day excluded) = {describePeriod(r)}: {wholeMonths} date to date
+      {remainingDays > 0 && (
+        <>
+          {' '}
+          + {remainingDays} days ÷ {DAYS_PER_PART_MONTH}
+        </>
+      )}{' '}
+      → <strong>{months}</strong>
     </>,
     <>
-      Penalty (B) = {formatINR(r.deficit)} × 1% × {r.months} = {formatINR(r.penaltyBeforeCap)}
+      Penalty (B) = {formatINR(r.deficit)} × 1% × {multiplier} = {formatINR(r.penaltyBeforeCap)}
       {r.isPenaltyCapped ? (
         <>
           , more than the deficit, so restricted to <strong>{formatINR(r.penalty)}</strong>
@@ -32,7 +51,7 @@ export default function CalculationSteps({ result: r }) {
     </>,
     r.includeInterest ? (
       <>
-        Interest (C) = {formatINR(r.deficit)} × 1% × {r.months} ={' '}
+        Interest (C) = {formatINR(r.deficit)} × 1% × {multiplier} ={' '}
         <strong>{formatINR(r.interest)}</strong> (no upper limit)
       </>
     ) : (

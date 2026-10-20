@@ -1,73 +1,32 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { SITE } from '@/config/site';
 import { RecentCalculations } from '@/features/history';
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
-import { Badge, Icon, PageHeader, SearchInput } from '@/shared/ui';
-import { getCategory, searchTools, toolPath } from '@/tools/registry';
+import { TOOLS } from '@/tools/registry';
+import DisclaimerSection from './sections/DisclaimerSection';
+import HeroSection from './sections/HeroSection';
+import PrinciplesSection from './sections/PrinciplesSection';
+import QuickStartSection from './sections/QuickStartSection';
+import ToolGuideSection from './sections/ToolGuideSection';
+import WorkflowSection from './sections/WorkflowSection';
 import './HomePage.css';
 
+/** Landing page: what AdalatSetu is, where to start, and a guide for every tool. */
 export default function HomePage() {
   useDocumentTitle(null);
-  const [query, setQuery] = useState('');
-  const tools = searchTools(query);
+  const toolsWithGuides = TOOLS.filter((tool) => tool.guide);
 
   return (
     <div className="home">
-      <section className="home__hero">
-        <PageHeader
-          eyebrow={`${SITE.name} · ${SITE.nameHindi}`}
-          title={SITE.tagline}
-          description={SITE.description}
-        />
-        <SearchInput
-          className="home__search"
-          label="Search tools"
-          placeholder="Search tools — e.g. stamp, section 35, penalty"
-          value={query}
-          onChange={setQuery}
-        />
-      </section>
-
-      <section aria-labelledby="tools-heading">
-        <h2 id="tools-heading" className="home__section-title">
-          Tools
-        </h2>
-        <div className="home__grid">
-          {tools.map((tool) => (
-            <Link key={tool.id} to={toolPath(tool)} className="tool-card">
-              <div className="tool-card__top">
-                <span className="tool-card__icon">
-                  <Icon name={tool.icon} size={20} />
-                </span>
-                {tool.isNew && <Badge tone="accent">New</Badge>}
-              </div>
-              <p className="tool-card__category">{getCategory(tool.category)?.name}</p>
-              <h3 className="tool-card__title">{tool.fullName}</h3>
-              <p className="tool-card__description">{tool.description}</p>
-              <p className="tool-card__statute">{tool.statute}</p>
-              <span className="tool-card__cta">
-                Open tool <Icon name="arrowRight" size={16} />
-              </span>
-            </Link>
-          ))}
-
-          {!query && (
-            <div className="tool-card tool-card--placeholder">
-              <span className="tool-card__icon">
-                <Icon name="sparkle" size={20} />
-              </span>
-              <h3 className="tool-card__title">More tools coming</h3>
-              <p className="tool-card__description">
-                Court fee, limitation and other everyday calculations will be added here.
-              </p>
-            </div>
-          )}
-        </div>
-        {tools.length === 0 && <p className="home__no-results">No tools match “{query}”.</p>}
-      </section>
-
+      <HeroSection />
+      <QuickStartSection />
       <RecentCalculations />
+      <WorkflowSection />
+      <div id="guides" className="home__guides">
+        {toolsWithGuides.map((tool) => (
+          <ToolGuideSection key={tool.id} tool={tool} />
+        ))}
+      </div>
+      <PrinciplesSection />
+      <DisclaimerSection />
     </div>
   );
 }

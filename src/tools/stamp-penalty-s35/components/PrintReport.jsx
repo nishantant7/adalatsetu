@@ -4,7 +4,7 @@ import { formatINR } from '@/shared/lib/currency';
 import { formatDate } from '@/shared/lib/dates';
 import { rupeesInWords } from '@/shared/lib/numberToWords';
 import { ACT_SHORT_NAME } from '../logic/constants';
-import { describePeriod } from '../logic/describePeriod';
+import { describeChargeableMonths, describePeriod } from '../logic/describePeriod';
 import { buildOrderDraft } from '../logic/orderDraft';
 import './PrintReport.css';
 
@@ -19,12 +19,15 @@ export default function PrintReport({ result: r, details }) {
 
   const figureRows = [
     ['Date of execution', formatDate(r.executionDate)],
-    ['Date of calculation / payment', formatDate(r.calculationDate)],
+    ['Date of hearing', formatDate(r.hearingDate)],
     ['Market value', formatINR(r.marketValue)],
     [`Proper stamp duty @ ${r.dutyRate}%`, formatINR(r.properDuty)],
     ['Stamp duty paid', formatINR(r.dutyPaid)],
     ['(A) Deficit stamp duty', formatINR(r.deficit)],
-    ['Chargeable period', `${r.months} months (${describePeriod(r)})`],
+    [
+      'Chargeable period (hearing day excluded)',
+      `${describeChargeableMonths(r)} (${describePeriod(r)})`,
+    ],
     [
       `(B) Penalty @ 1% p.m.${r.isPenaltyCapped ? ' — restricted to deficit' : ''}`,
       formatINR(r.penalty),

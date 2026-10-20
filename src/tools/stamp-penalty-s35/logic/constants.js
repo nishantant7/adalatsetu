@@ -2,6 +2,9 @@
 export const PENALTY_RATE_PER_MONTH = 1; // percent of deficit duty
 export const INTEREST_RATE_PER_MONTH = 1; // percent of deficit duty
 
+/** A part month is charged per day, treating every month as 30 days. */
+export const DAYS_PER_PART_MONTH = 30;
+
 /** Default stamp duty rate applied to market value when the user does not change it. */
 export const DEFAULT_DUTY_RATE = 5; // percent
 
